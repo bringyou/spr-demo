@@ -2,20 +2,25 @@ package com.github.by.sprlifecycledemo;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.context.Lifecycle;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Demo implements DisposableBean {
-    private final RedisConnectionFactory connectionFactory;
+    private final LifecycleBean lifecycle;
 
-    public Demo(RedisConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
+    private final NormalBean normalBean;
+
+    public Demo(LifecycleBean lifecycle, NormalBean normalBean) {
+        this.lifecycle = lifecycle;
+        this.normalBean = normalBean;
     }
 
     @Override
     public void destroy() throws Exception {
-        System.out.println("begin destroy");
-        String resp = connectionFactory.getConnection().ping();
+        boolean isLifecycleBeanRunning = lifecycle.isRunning();
+        System.out.println("isLifecycleBeanRunning = " + isLifecycleBeanRunning);
+        boolean isNormalBeanRunning = normalBean.isRunning();
+        System.out.println("isNormalBeanRunning = " + isNormalBeanRunning);
     }
 }
